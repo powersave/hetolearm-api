@@ -35,18 +35,80 @@ class CatalogController extends Controller
 
     public function show(string $slug)
     {
-        $product = Product::with(['category', 'collection', 'variants', 'images'])
-            ->where('slug', $slug)
+        $category = Category::where('slug', $slug)
             ->where('is_active', true)
+            ->with('blocks')
             ->firstOrFail();
 
-        return response()->json(['data' => $product]);
+        return response()->json([
+            'id' => $category->id,
+            'slug' => $category->slug,
+            'name' => $category->name,
+            'body_part' => $category->body_part,
+            'main_image' => $category->main_image ? '/storage/' . $category->main_image : null,
+            'background_image' => $category->background_image ? '/storage/' . $category->background_image : null,
+            'content' => $category->content,
+            'blocks' => $category->blocks->map(function ($block) {
+                return [
+                    'id' => $block->id,
+                    'title' => $block->title,
+                    'description' => $block->description,
+                    'image' => $block->image ? '/storage/' . $block->image : null,
+                    'sort_order' => $block->sort_order,
+                ];
+            }),
+        ]);
     }
 
     public function categories()
     {
         return response()->json([
-            'data' => Category::where('is_active', true)->orderBy('sort_order')->get(),
+            'data' => Category::where('is_active', true)
+                ->orderBy('sort_order')
+                ->get()
+                ->map(function ($category) {
+                    return [
+                        'id' => $category->id,
+                        'slug' => $category->slug,
+                        'name' => $category->name,
+                        'body_part' => $category->body_part,
+                        'main_image' => $category->main_image ? '/storage/' . $category->main_image : null,
+                        'background_image' => $category->background_image ? '/storage/' . $category->background_image : null,
+                        'content' => $category->content,
+                        'sort_order' => $category->sort_order,
+                    ];
+                }),
+        ]);
+    }
+
+    public function categoryShow(string $slug)
+    {
+        $category = Category::where('slug', $slug)
+            ->where('is_active', true)
+            ->with(['blocks' => function ($query) {
+                $query->orderBy('sort_order');
+            }])
+            ->firstOrFail();
+
+        return response()->json([
+            'data' => [
+                'id' => $category->id,
+                'slug' => $category->slug,
+                'name' => $category->name,
+                'body_part' => $category->body_part,
+                'main_image' => $category->main_image ? '/storage/' . $category->main_image : null,
+                'background_image' => $category->background_image ? '/storage/' . $category->background_image : null,
+                'content' => $category->content,
+                'blocks' => $category->blocks->map(function ($block) {
+                    return [
+                        'id' => $block->id,
+                        'title' => $block->title,
+                        'description' => $block->description,
+                        'image' => $block->image ? '/storage/' . $block->image : null,
+                        'sort_order' => $block->sort_order,
+                    ];
+                }),
+            ],
         ]);
     }
 

@@ -1,20 +1,44 @@
 <?php
 
-namespace App\Models;
+namespace App\Models; 
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
+
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Category extends Model
 {
-    use HasFactory;
+protected $fillable = [
+    'slug',
+    'name',
+    'body_part',
+	  'main_image',
+    'parent_id',
+    'sort_order',
+    'background_image',
+    'content',
+    'is_active',
+];
 
-    protected $fillable = ['slug', 'name', 'body_part', 'parent_id', 'sort_order', 'is_active'];
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+    protected static function booted()
+    {
+        static::updating(function ($category) {
+            if ($category->isDirty('background_image') && $category->getOriginal('background_image')) {
+                Storage::disk('public')->delete($category->getOriginal('background_image'));
+            }
+        });
 
-    protected $casts = ['is_active' => 'boolean', 'sort_order' => 'integer'];
-
+        static::deleting(function ($category) {
+            if ($category->background_image) {
+                Storage::disk('public')->delete($category->background_image);
+            }
+        });
+    }
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'parent_id');
@@ -25,8 +49,8 @@ class Category extends Model
         return $this->hasMany(Category::class, 'parent_id');
     }
 
-    public function products(): HasMany
+    public function blocks(): HasMany
     {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(CategoryBlock::class)->orderBy('sort_order');
     }
 }

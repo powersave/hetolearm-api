@@ -11,9 +11,9 @@ return new class extends Migration
         Schema::create('hero_videos', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
-            $table->string('video_url')->nullable();      // Для YouTube, Vimeo или прямых ссылок
-            $table->string('video_file')->nullable();     // Для локального сервера
-            $table->string('video_file_r2')->nullable();  // Для Cloudflare R2
+            $table->string('video_url')->nullable();
+            $table->string('video_file')->nullable();
+            $table->string('video_file_r2')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
