@@ -15,6 +15,7 @@ protected $fillable = [
     'name',
     'body_part',
 	  'main_image',
+	  'background_opacity',
     'parent_id',
     'sort_order',
     'background_image',

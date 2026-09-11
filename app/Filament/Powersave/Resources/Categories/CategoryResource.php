@@ -77,9 +77,19 @@ class CategoryResource extends Resource
                 FileUpload::make('background_image')
                     ->label('Фоновое изображение секции')
                     ->disk('public')
+                    ->visibility('public')
                     ->directory('categories/backgrounds')
                     ->image()
                     ->maxSize(5120)
+                    ->columnSpanFull(),
+
+                // НОВОЕ ПОЛЕ: Прозрачность подложки
+                \Filament\Forms\Components\Slider::make('background_opacity')
+                    ->label('Затемнение фона (0% = прозрачно, 100% = чёрный)')
+                    ->minValue(0)
+                    ->maxValue(100)
+                    ->step(5)
+                    ->default(30)
                     ->columnSpanFull(),
 
                 RichEditor::make('content')

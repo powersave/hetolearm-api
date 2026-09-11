@@ -47,6 +47,7 @@ class CatalogController extends Controller
             'body_part' => $category->body_part,
             'main_image' => $category->main_image ? '/storage/' . $category->main_image : null,
             'background_image' => $category->background_image ? '/storage/' . $category->background_image : null,
+			'background_opacity' => $category->background_opacity ?? 30,
             'content' => $category->content,
             'blocks' => $category->blocks->map(function ($block) {
                 return [
@@ -74,6 +75,7 @@ class CatalogController extends Controller
                         'body_part' => $category->body_part,
                         'main_image' => $category->main_image ? '/storage/' . $category->main_image : null,
                         'background_image' => $category->background_image ? '/storage/' . $category->background_image : null,
+						'background_opacity' => $category->background_opacity ?? 30,
                         'content' => $category->content,
                         'sort_order' => $category->sort_order,
                     ];
@@ -98,6 +100,7 @@ class CatalogController extends Controller
                 'body_part' => $category->body_part,
                 'main_image' => $category->main_image ? '/storage/' . $category->main_image : null,
                 'background_image' => $category->background_image ? '/storage/' . $category->background_image : null,
+				'background_opacity' => $category->background_opacity ?? 30,
                 'content' => $category->content,
                 'blocks' => $category->blocks->map(function ($block) {
                     return [
